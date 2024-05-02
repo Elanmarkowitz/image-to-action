@@ -18,7 +18,11 @@ from prompts import EXTRACT_URL_PROMPT, \
 from dotenv import load_dotenv
 load_dotenv()
 
-LOCAL=False
+IS_LOCAL = os.getenv('LOCAL')
+if IS_LOCAL == "TRUE":
+    LOCAL=True
+else:
+    LOCAL=False
 
 GOOGLE_API_KEY = os.getenv('GOOGLE_API_KEY')
 MULTION_API_KEY = os.getenv('MULTION_API_KEY')
