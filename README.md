@@ -6,29 +6,38 @@ MULTION_API_KEY and GOOGLE_API_KEY
 If running server locally create a `.env` file with your keys
 e.g.
 .env
-```GOOGLE_API_KEY=...
+```
+GOOGLE_API_KEY=...
 MULTION_API_KEY=...
 ```
 
 If you wish to run with MultiOn local mode set 
-```export LOCAL=TRUE```
+```
+export LOCAL=TRUE
+```
 
 To setup the docker image run
-```docker build -t image-agent .```
+```
+docker build -t image-agent .
+```
 
 then to start the server run
-```docker run -p 8000:8000 image-agent```
+```
+docker run -p 8000:8000 image-agent
+```
 
 # Querying the server
 
 To query the server use requests of the following form 
 
-```curl -X 'POST' \
+```
+curl -X 'POST' \
   'http://localhost:8000/upload/' \
   -H 'accept: application/json' \
   -H 'Content-Type: multipart/form-data' \
   -F 'file=@twitter_users/Screenshot 2024-05-01 at 7.20.59 PM.png' \
-  -F 'text=Get the latest tweet by this twitter user'```
+  -F 'text=Get the latest tweet by this twitter user'
+```
 
 Where file is the image file and text is the instructions. 
 
@@ -36,7 +45,9 @@ This will return a response with a task_id.
 
 To query the status of the task use 
 
-```curl -X 'POST' 'http://localhost:8000/status/<task_id>'```
+```
+curl -X 'POST' 'http://localhost:8000/status/<task_id>'
+```
 
 This will show the history of actions until status is DONE. 
 
