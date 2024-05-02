@@ -8,7 +8,7 @@ To setup run
 ```docker build -t image-agent .```
 
 then
-```docker run -P image-agent```
+```docker run -p 8000:8000 image-agent```
 
 This will start the server. This server uses MultiOn remote rather than local. To switch to local mode set 
 ```export LOCAL=TRUE```
