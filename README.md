@@ -2,7 +2,13 @@
 This is a server that takes an image and executes web actions
 
 Make sure to set your environment variables for
-MULTION_API_KEY and GOOGLE_API_KEY (can put them in a .env file for development or set them otherways)
+MULTION_API_KEY and GOOGLE_API_KEY
+If running server locally create a `.env` file with your keys
+e.g.
+.env
+```GOOGLE_API_KEY=...
+MULTION_API_KEY=...
+```
 
 If you wish to run with MultiOn local mode set 
 ```export LOCAL=TRUE```
