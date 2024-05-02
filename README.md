@@ -1,6 +1,9 @@
 # image-to-action
 This is a server that takes an image and executes web actions
 
+Make sure to set your environment variables for
+MULTION_API_KEY and GOOGLE_API_KEY (can put them in a .env file for development or set them otherways)
+
 To setup run
 ```docker build -t image-agent .```
 
