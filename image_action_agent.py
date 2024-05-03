@@ -4,10 +4,12 @@ import os
 from urlextract import URLExtract
 from retry import retry
 import traceback
+import logging
 
 from langchain_community.agent_toolkits import MultionToolkit
 from multion.client import MultiOn
 
+logging.basicConfig(level=logging.INFO)
 
 from prompts import EXTRACT_URL_PROMPT, \
     IMAGE_TO_ACTION_PROMPT_Pt1, IMAGE_TO_ACTION_PROMPT_Pt2, EXAMPLE_IMAGE, \
@@ -44,11 +46,11 @@ def run_agent(image_path, instructions, command_history):
         url = parse_url(command)
         command_results, final_status = run_multion(command, command_history, url)
         if final_status != "DONE":
-            print(f"Final status was {final_status}.")
+            logging.info(f"Final status was {final_status}.")
             raise ValueError(f"Final status was {final_status}.")
         return command_results, final_status
     except Exception as e:  # TODO: overly broad exception
-        print(traceback.format_exc())
+        logging.info(traceback.format_exc())
         command_history.append(f"ERROR: {str(e)}")
         command_history.append("Retrying with command: {command1}")
         url = parse_url(command1)
@@ -62,13 +64,13 @@ def run_multion(command, command_history, url):
     while continuing:
         response = step_session(session_id, command, url)
         continuing = (response.status in ['CONTINUE', 'PAUSED'])
-        print(response.status)
-        print(response.message)
+        logging.info(response.status)
+        logging.info(response.message)
         command_history.append(f"STATUS: {response.status}, MESSAGE: {response.message}")
     
     final_status = response.status
     close_session_response = multion_client.sessions.close(session_id=session_id)
-    print("close_session_response: ", close_session_response)
+    logging.info("close_session_response: ", close_session_response)
 
     return command_history, final_status
 
@@ -91,8 +93,8 @@ def start_session(url, local):
         local=LOCAL
     )
     session_id = create_session_response.session_id
-    print(create_session_response.status)
-    print(create_session_response.message)
+    logging.info(create_session_response.status)
+    logging.info(create_session_response.message)
     return session_id
 
 @retry(exceptions=ValueError, tries=3, delay=1, backoff=2, logger=None)
@@ -109,7 +111,7 @@ def parse_intent(image_path, instructions):
     response = vision_model.generate_content(full_prompt)
     response.resolve()
 
-    print(response.text)
+    logging.info(response.text)
     return response.text
 
 @retry(exceptions=ValueError, tries=3, delay=1, backoff=2, logger=None)
@@ -126,7 +128,7 @@ def parse_image_context(image_path, instructions):
     response = vision_model.generate_content(full_prompt)
     response.resolve()
 
-    print(response.text)
+    logging.info(response.text)
     return response.text
 
 @retry(exceptions=ValueError, tries=3, delay=1, backoff=2, logger=None)
@@ -137,7 +139,7 @@ def parse_intent2(image_path, instructions):
 
     response = text_model.generate_content(full_prompt)
 
-    print(response.text)
+    logging.info(response.text)
     return response.text
 
 @retry(exceptions=ValueError, tries=3, delay=1, backoff=2, logger=None)
@@ -146,7 +148,7 @@ def combine_intents(command1, command2):
     full_prompt = [COMBINE_INSTRUCTIONS_PROMPT.format(instructions1=command1, instructions2=command2)]
     response = text_model.generate_content(full_prompt)
 
-    print(response.text)
+    logging.info(response.text)
     return response.text
 
 def parse_intent3(image_path, instructions):
@@ -165,7 +167,7 @@ def parse_url(task_instructions):
     response = text_model.generate_content([full_prompt])
     response.resolve()
 
-    print(response.text)
+    logging.info(response.text)
     extractor = URLExtract()
     try:
         url = extractor.find_urls(response.text)[0]

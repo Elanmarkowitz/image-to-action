@@ -4,6 +4,10 @@ from fastapi.responses import JSONResponse
 import image_action_agent
 import traceback
 
+import logging 
+
+logging.basicConfig(level=logging.INFO)
+
 app = FastAPI()
 
 processing_tasks = {}
@@ -34,7 +38,7 @@ def run_agent(task_id, file, text):
         command_results, final_status = image_action_agent.run_agent(file.filename, text, processing_tasks[task_id]["command_history"])
         processing_tasks[task_id] = {"status": "completed", "command_results": command_results, "final_status": final_status}
     except Exception as e:
-        print(traceback.format_exc())
+        logging.info(traceback.format_exc())
         processing_tasks[task_id].update({"status": "error", "error": str(e)})
 
 @app.get("/status/{task_id}")
