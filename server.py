@@ -12,6 +12,10 @@ app = FastAPI()
 
 processing_tasks = {}
 
+@app.get("/")
+async def root():
+    return {"message": "Hello World"}
+
 @app.post("/upload/")
 async def upload_image_and_text(file: UploadFile = File(...), text: str = Form(...), background_tasks: BackgroundTasks = None):
     try:
@@ -47,3 +51,5 @@ async def get_task_status(task_id: str):
         return processing_tasks[task_id]
     else:
         return {"status": "not found"}
+    
+logging.info("Server started.")
